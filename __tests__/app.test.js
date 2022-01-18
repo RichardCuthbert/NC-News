@@ -58,4 +58,11 @@ describe("/api/articles/:articleId", () => {
         });
     });
   });
+  it("status:400 and returns a bad request message when an incorrect article ID is specified", () => {
+    return request(app)
+      .get("/api/articles/swrg")
+      .then((res) => {
+        expect(res.body.msg).toBe("Bad request");
+      });
+  });
 });
