@@ -57,12 +57,21 @@ describe("/api/articles/:articleId", () => {
           );
         });
     });
-  });
-  it("status:400 and returns a bad request message when an incorrect article ID is specified", () => {
-    return request(app)
-      .get("/api/articles/swrg")
-      .then((res) => {
-        expect(res.body.msg).toBe("Bad request");
-      });
+    it("status:400 and returns a bad request message when an incorrect article ID is specified", () => {
+      return request(app)
+        .get("/api/articles/swrg")
+        .expect(400)
+        .then((res) => {
+          expect(res.body.msg).toBe("Bad request");
+        });
+    });
+    it("status:404 and returns a not found message", () => {
+      return request(app)
+        .get("/api/articles/312")
+        .expect(404)
+        .then((res) => {
+          expect(res.body.msg).toBe("Not found");
+        });
+    });
   });
 });
