@@ -46,7 +46,7 @@ describe("/api/articles/:articleId", () => {
         .then((response) => {
           expect(response.body).toEqual(
             expect.objectContaining({
-              article_id: expect.any(Number),
+              article_id: 1 /*expect.any(Number)*/,
               title: expect.any(String),
               body: expect.any(String),
               votes: expect.any(Number),
