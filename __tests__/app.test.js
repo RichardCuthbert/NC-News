@@ -172,3 +172,123 @@ describe("/api/articles/:articleId", () => {
     });
   });
 });
+
+describe("/api/articles", () => {
+  describe("/GET", () => {
+    it("status:200 and returns an array of all articles in the database when no queries are specified", () => {
+      return request(app)
+        .get("/api/articles")
+        .expect(200)
+        .then((res) => {
+          expect(res.body.articles).toHaveLength(12);
+          res.body.articles.forEach((article) => {
+            expect(article).toEqual(
+              expect.objectContaining({
+                article_id: expect.any(Number),
+                title: expect.any(String),
+                body: expect.any(String),
+                votes: expect.any(Number),
+                topic: expect.any(String),
+                author: expect.any(String),
+                created_at: expect.any(String),
+                comment_count: expect.any(Number),
+              })
+            );
+          });
+        });
+    });
+    it("status:200 and returns articles by date created in descending order when no queries are specified", () => {
+      return request(app)
+        .get("/api/articles")
+        .expect(200)
+        .then((res) => {
+          expect(res.body.articles).toBeSortedBy("created_at", {
+            descending: true,
+          });
+        });
+    });
+    it("status:200 and returns articles in descending order according to the column specified in the sort_by query when this is the only query specified", () => {
+      return request(app)
+        .get("/api/articles?sort_by=article_id")
+        .expect(200)
+        .then((res) => {
+          expect(res.body.articles).toBeSortedBy("article_id", {
+            descending: true,
+          });
+        });
+    });
+    it("status:200 and returns articles sorted by date created in the order specified by the order query when this is the only query specified", () => {
+      return request(app)
+        .get("/api/articles?order=asc")
+        .expect(200)
+        .then((res) => {
+          expect(res.body.articles).toBeSortedBy("created_at", {
+            descending: false,
+          });
+        });
+    });
+    it("status:200 and returns articles sorted by the column specified in the sort_by query and ordered by the order specified in the order query when both of these queries are specified", () => {
+      return request(app)
+        .get("/api/articles?sort_by=article_id&order=asc")
+        .expect(200)
+        .then((res) => {
+          expect(res.body.articles).toBeSortedBy("article_id", {
+            descending: false,
+          });
+        });
+    });
+    it("status:200 and returns articles filtered by the topic specified in the topic query if a topic query is specified", () => {
+      return request(app)
+        .get("/api/articles?topic=mitch")
+        .expect(200)
+        .then((res) => {
+          res.body.articles.forEach((article) => {
+            expect(article).toEqual(
+              expect.objectContaining({
+                article_id: expect.any(Number),
+                title: expect.any(String),
+                body: expect.any(String),
+                votes: expect.any(Number),
+                topic: "mitch",
+                author: expect.any(String),
+                created_at: expect.any(String),
+                comment_count: expect.any(Number),
+              })
+            );
+          });
+        });
+    });
+    it("status:404 and returns a not found message when the specified topic is not in the database", () => {
+      return request(app)
+        .get("/api/articles?topic=wefE")
+        .expect(404)
+        .then((res) => {
+          expect(res.body.msg).toBe("Not found");
+        });
+    });
+    it("status:200 and returns an empty array when the specified topic is in the database, but does not match any articles", () => {
+      return request(app)
+        .get("/api/articles?topic=paper")
+        .expect(200)
+        .then((res) => {
+          expect(res.body.articles).toEqual([]);
+        });
+    });
+    it("status:400 and returns an invalid sort query message when the column specified by the sort_by query does not exist in the database", () => {
+      return request(app)
+        .get("/api/articles?sort_by=srg")
+        .expect(400)
+        .then((res) => {
+          expect(res.body.msg).toBe("Invalid sort query");
+        });
+    });
+    it("status:400 and returns an invalid order message when an order other than asc or desc is specified", () => {
+      return request(app)
+        .get("/api/articles?order=ewg")
+        .expect(400)
+        .then((res) => {
+          expect(res.body.msg).toBe("Invalid order query");
+        });
+    });
+  });
+});

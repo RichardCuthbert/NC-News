@@ -48,3 +48,55 @@ exports.updateVotesByArticleId = (inc_votes, article_id, bodyLength) => {
       return article;
     });
 };
+
+exports.fetchArticles = (sort_by, order, topic) => {
+  if (!sort_by) {
+    sort_by = "created_at";
+  }
+
+  if (!order) {
+    order = "desc";
+  }
+
+  if (
+    ![
+      "article_id",
+      "title",
+      "body",
+      "votes",
+      "topic",
+      "author",
+      "created_at",
+    ].includes(sort_by)
+  ) {
+    return Promise.reject({ status: 400, msg: "Invalid sort query" });
+  }
+
+  if (!["asc", "desc"].includes(order)) {
+    return Promise.reject({ status: 400, msg: "Invalid order query" });
+  }
+
+  return db
+    .query(
+      `SELECT articles.*, CAST(COUNT(comments.comment_id) AS INT) AS comment_count
+  FROM articles
+LEFT JOIN comments ON articles.article_id = comments.article_id
+GROUP BY articles.article_id 
+ORDER BY ${sort_by} ${order}`
+    )
+    .then((res) => {
+      if (topic) {
+        return db
+          .query("SELECT * FROM topics WHERE topic_name = $1", [topic])
+          .then((res) => {
+            if (res.rows.length === 0) {
+              return Promise.reject({ status: 404, msg: "Not found" });
+            } else {
+              return res.rows.filter((article) => article.topic === topic);
+            }
+          });
+      } else {
+        return res.rows;
+      }
+    });
+};
