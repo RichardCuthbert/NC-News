@@ -406,5 +406,29 @@ describe("/api/articles/:article_id/comments", () => {
           expect(res.body.msg).toBe("Bad request");
         });
     });
+    it("status:400 and returns a bad request message when the comment body is an empty string", () => {
+      return request(app)
+        .post("/api/articles/1/comments")
+        .send({
+          username: "rogersop",
+          body: "",
+        })
+        .expect(400)
+        .then((res) => {
+          expect(res.body.msg).toBe("Bad request");
+        });
+    });
+    it("status:400 and returns a bad request message the datatype of username is wrong", () => {
+      return request(app)
+        .post("/api/articles/1/comments")
+        .send({
+          username: 1,
+          body: "yo",
+        })
+        .expect(400)
+        .then((res) => {
+          expect(res.body.msg).toBe("Bad request");
+        });
+    });
   });
 });
