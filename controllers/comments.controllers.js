@@ -22,3 +22,11 @@ exports.postComment = (req, res, next) => {
     })
     .catch(next);
 };
+
+exports.deleteComment = (req, res, next) => {
+  const { comment_id } = req.params;
+  removeComment(comment_id).then((deleted) => {
+    console.log(deleted);
+    res.status(204).send({});
+  });
+};

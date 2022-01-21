@@ -58,6 +58,7 @@ describe("/api/articles/:articleId", () => {
           );
         });
     });
+
     it("status:400 and returns a bad request message when an incorrect article ID is specified", () => {
       return request(app)
         .get("/api/articles/swrg")
@@ -476,6 +477,24 @@ describe("/api/articles/:article_id/comments", () => {
         .expect(400)
         .then((res) => {
           expect(res.body.msg).toBe("Bad request");
+        });
+    });
+  });
+});
+
+describe("/api/comments/:comment_id", () => {
+  describe("DELETE", () => {
+    it("status:204, responds with no content, and removes the comment whose id is specified", () => {
+      return request(app)
+        .delete("/api/comments/1")
+        .expect(204)
+        .then((res) => {
+          expect(res.body).toEqual({});
+          return db
+            .query("SELECT * FROM comments WHERE comment_id = 1")
+            .then((res) => {
+              expect(res.rows.length).toBe(0);
+            });
         });
     });
   });
