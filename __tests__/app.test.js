@@ -340,4 +340,38 @@ describe("/api/articles/:article_id/comments", () => {
         });
     });
   });
+  describe("/POST", () => {
+    it("status:201 and returns the posted comment when an object with arropriate username and body is provided and a valid article id is specified", () => {
+      return request(app)
+        .post("/api/articles/1/comments")
+        .send({
+          username: "rogersop",
+          body: "yo",
+        })
+        .expect(201)
+        .then((res) => {
+          expect(res.body.comment).toEqual(
+            expect.objectContaining({
+              comment_id: expect.any(Number),
+              votes: expect.any(Number),
+              article_id: expect.any(Number),
+              created_at: expect.any(String),
+              author: expect.any(String),
+              body: expect.any(String),
+            })
+          );
+        });
+    });
+    it("status:400 and returns a bad request message when req.body does not contain a comment body", () => {
+      request(app)
+        .post("/api/articles/1/comments")
+        .send({
+          username: "rogersop",
+        })
+        .expect(400)
+        .then((res) => {
+          expect(res.body.msg).toBe("Bad request");
+        });
+    });
+  });
 });

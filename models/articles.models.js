@@ -1,4 +1,5 @@
 const req = require("express/lib/request");
+const ConnectionParameters = require("pg/lib/connection-parameters");
 const db = require("../db/connection");
 
 exports.fetchArticleById = (article_id) => {
@@ -119,5 +120,26 @@ exports.fetchCommentsByArticleId = (article_id) => {
             return res.rows;
           }
         });
+    });
+};
+
+exports.createComment = (article_id, body, username) => {
+  if (!article_id || !body) {
+    return Promise.reject({
+      status: 400,
+      msg: "Bad request",
+    });
+  }
+  return db
+    .query(
+      `INSERT INTO comments
+   (article_id, body, author)
+    VALUES 
+    ($1, $2, $3)
+    RETURNING *`,
+      [article_id, body, username]
+    )
+    .then((res) => {
+      return res.rows[0];
     });
 };
