@@ -123,8 +123,9 @@ exports.fetchCommentsByArticleId = (article_id) => {
     });
 };
 
-exports.createComment = (article_id, body, username) => {
-  if (!username || !body) {
+exports.createComment = (article_id, body, username, reqBodyLength) => {
+  console.log(reqBodyLength);
+  if (!username || !body || reqBodyLength > 2) {
     return Promise.reject({
       status: 400,
       msg: "Bad request",

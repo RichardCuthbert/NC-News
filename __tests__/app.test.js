@@ -393,5 +393,18 @@ describe("/api/articles/:article_id/comments", () => {
           expect(res.body.msg).toBe("Bad request");
         });
     });
+    it("status:400 and returns a bad request message when req.body includes fields other than a username and comment body", () => {
+      return request(app)
+        .post("/api/articles/1/comments")
+        .send({
+          username: "rogersop",
+          body: "yo",
+          zap: "hello",
+        })
+        .expect(400)
+        .then((res) => {
+          expect(res.body.msg).toBe("Bad request");
+        });
+    });
   });
 });
