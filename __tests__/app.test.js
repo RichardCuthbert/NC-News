@@ -44,7 +44,7 @@ describe("/api/articles/:articleId", () => {
         .get("/api/articles/1")
         .expect(200)
         .then((response) => {
-          expect(response.body).toEqual(
+          expect(response.body.article).toEqual(
             expect.objectContaining({
               article_id: 1,
               title: expect.any(String),
@@ -77,14 +77,14 @@ describe("/api/articles/:articleId", () => {
     });
   });
   describe("/PATCH", () => {
-    it("status:201 and returns an article whose vote is incremented by the specified amount when that amount is > 0", () => {
+    it.only("status:201 and returns an article whose vote is incremented by the specified amount when that amount is > 0", () => {
       const incVotes = { inc_votes: 1 };
       return request(app)
         .patch("/api/articles/1")
         .send(incVotes)
         .expect(200)
         .then((res) => {
-          expect(res.body).toEqual({
+          expect(res.body.article).toEqual({
             article_id: 1,
             title: expect.any(String),
             body: expect.any(String),
@@ -505,7 +505,7 @@ describe("/api/comments/:comment_id", () => {
           expect(res.body.msg).toBe("Bad request");
         });
     });
-    it.only("status:404 and returns a not found message if the specified comment ID does not exist in the database", () => {
+    it("status:404 and returns a not found message if the specified comment ID does not exist in the database", () => {
       return request(app)
         .delete("/api/comments/312")
         .expect(404)
