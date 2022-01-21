@@ -497,5 +497,21 @@ describe("/api/comments/:comment_id", () => {
             });
         });
     });
+    it("status:400 and returns a bad request message if the specified comment ID is of the wrong datatype", () => {
+      return request(app)
+        .delete("/api/comments/wef")
+        .expect(400)
+        .then((res) => {
+          expect(res.body.msg).toBe("Bad request");
+        });
+    });
+    it.only("status:404 and returns a not found message if the specified comment ID does not exist in the database", () => {
+      return request(app)
+        .delete("/api/comments/312")
+        .expect(404)
+        .then((res) => {
+          expect(res.body.msg).toBe("Not found");
+        });
+    });
   });
 });
