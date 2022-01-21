@@ -124,12 +124,13 @@ exports.fetchCommentsByArticleId = (article_id) => {
 };
 
 exports.createComment = (article_id, body, username) => {
-  if (!article_id || !body) {
+  if (!username || !body) {
     return Promise.reject({
       status: 400,
       msg: "Bad request",
     });
   }
+
   return db
     .query(
       `INSERT INTO comments

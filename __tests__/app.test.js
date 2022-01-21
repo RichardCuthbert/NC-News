@@ -363,11 +363,31 @@ describe("/api/articles/:article_id/comments", () => {
         });
     });
     it("status:400 and returns a bad request message when req.body does not contain a comment body", () => {
-      request(app)
+      return request(app)
         .post("/api/articles/1/comments")
         .send({
           username: "rogersop",
         })
+        .expect(400)
+        .then((res) => {
+          expect(res.body.msg).toBe("Bad request");
+        });
+    });
+    it("status:400 and returns a bad request message when req.body does not contain a username", () => {
+      return request(app)
+        .post("/api/articles/1/comments")
+        .send({
+          body: "rogersop",
+        })
+        .expect(400)
+        .then((res) => {
+          expect(res.body.msg).toBe("Bad request");
+        });
+    });
+    it("status:400 and returns a bad request message when req.body is empty", () => {
+      return request(app)
+        .post("/api/articles/1/comments")
+        .send({})
         .expect(400)
         .then((res) => {
           expect(res.body.msg).toBe("Bad request");
