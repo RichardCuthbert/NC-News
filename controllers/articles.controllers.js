@@ -44,6 +44,7 @@ exports.getCommentsByArticleId = (req, res, next) => {
     })
     .catch(next);
 };
+
 exports.postComment = (req, res, next) => {
   const { body, username } = req.body;
   const { article_id } = req.params;

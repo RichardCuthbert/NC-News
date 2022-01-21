@@ -418,11 +418,59 @@ describe("/api/articles/:article_id/comments", () => {
           expect(res.body.msg).toBe("Bad request");
         });
     });
-    it("status:400 and returns a bad request message the datatype of username is wrong", () => {
+    it("status:400 and returns a bad request message when the username is an empty string", () => {
+      return request(app)
+        .post("/api/articles/1/comments")
+        .send({
+          username: "",
+          body: "yo",
+        })
+        .expect(400)
+        .then((res) => {
+          expect(res.body.msg).toBe("Bad request");
+        });
+    });
+    it("status:400 and returns a bad request message if the datatype of username is wrong", () => {
       return request(app)
         .post("/api/articles/1/comments")
         .send({
           username: 1,
+          body: "yo",
+        })
+        .expect(400)
+        .then((res) => {
+          expect(res.body.msg).toBe("Bad request");
+        });
+    });
+    it("status:400 and returns a bad request message if the datatype of body is wrong", () => {
+      return request(app)
+        .post("/api/articles/1/comments")
+        .send({
+          username: "rogersop",
+          body: 1,
+        })
+        .expect(400)
+        .then((res) => {
+          expect(res.body.msg).toBe("Bad request");
+        });
+    });
+    it("status:404 and returns a not found message when the article id specified does not exist in the database", () => {
+      return request(app)
+        .post("/api/articles/312/comments")
+        .send({
+          username: "rogersop",
+          body: "yo",
+        })
+        .expect(404)
+        .then((res) => {
+          expect(res.body.msg).toBe("Not found");
+        });
+    });
+    it("status:400 and returns a bad request message when the article id specified is not a valid article id", () => {
+      return request(app)
+        .post("/api/articles/hello/comments")
+        .send({
+          username: "rogersop",
           body: "yo",
         })
         .expect(400)
