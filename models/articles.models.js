@@ -1,5 +1,5 @@
-const req = require("express/lib/request");
-const ConnectionParameters = require("pg/lib/connection-parameters");
+//const req = require("express/lib/request");
+//const ConnectionParameters = require("pg/lib/connection-parameters");
 const db = require("../db/connection");
 
 exports.fetchArticleById = (article_id) => {
@@ -100,68 +100,4 @@ ORDER BY ${sort_by} ${order}`
         return res.rows;
       }
     });
-};
-
-exports.fetchCommentsByArticleId = (article_id) => {
-  return db
-    .query(
-      `SELECT comment_id, votes, created_at, author, body
-   FROM comments
-    WHERE article_id=$1`,
-      [article_id]
-    )
-    .then((res) => {
-      return db
-        .query("SELECT * FROM articles WHERE article_id = $1", [article_id])
-        .then((z) => {
-          if (z.rows.length === 0) {
-            return Promise.reject({ status: 404, msg: "Not found" });
-          } else {
-            return res.rows;
-          }
-        });
-    });
-};
-
-exports.createComment = (article_id, body, username, reqBodyLength) => {
-  if (!username || !body || reqBodyLength > 2 || typeof body !== "string") {
-    return Promise.reject({
-      status: 400,
-      msg: "Bad request",
-    });
-  }
-
-  return db
-    .query("SELECT * FROM articles WHERE article_id = $1", [article_id])
-    .then((z) => {
-      if (z.rows.length === 0) {
-        return Promise.reject({ status: 404, msg: "Not found" });
-      } else {
-        return db
-          .query(
-            `INSERT INTO comments
-       (article_id, body, author)
-        VALUES 
-        ($1, $2, $3)
-        RETURNING *`,
-            [article_id, body, username]
-          )
-          .then((res) => {
-            return res.rows[0];
-          });
-      }
-    });
-
-  /*return db
-    .query(
-      `INSERT INTO comments
-   (article_id, body, author)
-    VALUES 
-    ($1, $2, $3)
-    RETURNING *`,
-      [article_id, body, username]
-    )
-    .then((res) => {
-      return res.rows[0];
-    });*/
 };

@@ -4,9 +4,12 @@ const {
   getArticleById,
   patchVotesByArticleId,
   getArticles,
+} = require("./controllers/articles.controllers");
+const {
   getCommentsByArticleId,
   postComment,
-} = require("./controllers/articles.controllers");
+  deleteComment,
+} = require("./controllers/comments.controllers");
 
 const app = express();
 

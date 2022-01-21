@@ -3,8 +3,6 @@ const {
   fetchArticleById,
   updateVotesByArticleId,
   fetchArticles,
-  fetchCommentsByArticleId,
-  createComment,
 } = require("../models/articles.models");
 
 exports.getArticleById = (req, res, next) => {
@@ -32,25 +30,6 @@ exports.getArticles = (req, res, next) => {
   fetchArticles(sort_by, order, topic)
     .then((articles) => {
       res.status(200).send({ articles });
-    })
-    .catch(next);
-};
-
-exports.getCommentsByArticleId = (req, res, next) => {
-  const { article_id } = req.params;
-  fetchCommentsByArticleId(article_id)
-    .then((comments) => {
-      res.status(200).send({ comments });
-    })
-    .catch(next);
-};
-
-exports.postComment = (req, res, next) => {
-  const { body, username } = req.body;
-  const { article_id } = req.params;
-  createComment(article_id, body, username, Object.keys(req.body).length)
-    .then((comment) => {
-      res.status(201).send({ comment });
     })
     .catch(next);
 };
