@@ -26,13 +26,17 @@ exports.fetchArticleById = (article_id) => {
 };
 
 exports.updateVotesByArticleId = (inc_votes, article_id, bodyLength) => {
-  if ((!inc_votes && inc_votes != 0) || bodyLength > 1) {
-    //preempting
+  if (bodyLength > 1) {
     return Promise.reject({
       status: 400,
       msg: "Bad request",
     });
   }
+
+  if (!inc_votes) {
+    inc_votes = 0;
+  }
+
   return db
     .query(
       "UPDATE articles SET votes = votes + $1 WHERE article_id = $2 RETURNING *",

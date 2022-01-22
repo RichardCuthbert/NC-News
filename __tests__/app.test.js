@@ -77,7 +77,7 @@ describe("/api/articles/:articleId", () => {
     });
   });
   describe("/PATCH", () => {
-    it("status:201 and returns an article whose vote is incremented by the specified amount when that amount is > 0", () => {
+    it("status:200 and returns an article whose vote is incremented by the specified amount when that amount is > 0", () => {
       const incVotes = { inc_votes: 1 };
       return request(app)
         .patch("/api/articles/1")
@@ -95,7 +95,7 @@ describe("/api/articles/:articleId", () => {
           });
         });
     });
-    it("status:201 and returns an article whose vote is unchanged when inc_votes is 0", () => {
+    it("status:200 and returns an article whose vote is unchanged when inc_votes is 0", () => {
       const incVotes = { inc_votes: 0 };
       return request(app)
         .patch("/api/articles/1")
@@ -113,7 +113,24 @@ describe("/api/articles/:articleId", () => {
           });
         });
     });
-    it("status:201 and returns an article whose vote is decremented by the spefified amount when that amount is < 0", () => {
+    it("status:200 and returns an article whose vote is unchanged when inc_votes is missing from the request body", () => {
+      return request(app)
+        .patch("/api/articles/1")
+        .send({})
+        .expect(200)
+        .then((res) => {
+          expect(res.body.article).toEqual({
+            article_id: 1,
+            title: expect.any(String),
+            body: expect.any(String),
+            votes: 100,
+            topic: expect.any(String),
+            author: expect.any(String),
+            created_at: expect.any(String),
+          });
+        });
+    });
+    it("status:200 and returns an article whose vote is decremented by the spefified amount when that amount is < 0", () => {
       const incVotes = { inc_votes: -1 };
       return request(app)
         .patch("/api/articles/1")
@@ -131,16 +148,16 @@ describe("/api/articles/:articleId", () => {
           });
         });
     });
-    it("status:400 and returns a bad request message when req.body does not include an inc_votes property", () => {
-      const obj = {};
-      return request(app)
-        .patch("/api/articles/1")
-        .send(obj)
-        .expect(400)
-        .then((res) => {
-          expect(res.body.msg).toBe("Bad request");
-        });
-    });
+    // it("status:400 and returns a bad request message when req.body does not include an inc_votes property", () => {
+    //   const obj = {};
+    //   return request(app)
+    //     .patch("/api/articles/1")
+    //     .send(obj)
+    //     .expect(400)
+    //     .then((res) => {
+    //       expect(res.body.msg).toBe("Bad request");
+    //     });
+    // });
     it("status:400 and returns a bad request message when req.body's inc_votes property is of an incorrect data type", () => {
       const obj = { inc_votes: "hi" };
       return request(app)
