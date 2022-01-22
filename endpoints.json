@@ -9,6 +9,22 @@
       "topics": [{ "topic_name": "football", "topic_description": "Footie!" }]
     }
   },
+  "GET /api/articles/article_id": {
+    "description": "serces the article specified by the article_id parameter",
+    "queries": [],
+    "exampleResponse": {
+      "article": {
+        "article_id": 1,
+        "title": "Running a Node App",
+        "body": "This is part two of a series on how to get up and running with Systemd and Node.js. This part dives deeper into how to successfully run your app with systemd long-term, and how to set it up in a production environment.",
+        "votes": 28,
+        "topic": "coding",
+        "author": "jessjelly",
+        "created_at": "2020-11-07T06:03:00.000Z",
+        "comment_count": 13
+      }
+    }
+  },
   "GET /api/articles": {
     "description": "serves an array of all articles",
     "queries": ["topic", "sort_by", "order"],
