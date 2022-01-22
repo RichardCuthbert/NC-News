@@ -77,7 +77,7 @@ describe("/api/articles/:articleId", () => {
     });
   });
   describe("/PATCH", () => {
-    it.only("status:201 and returns an article whose vote is incremented by the specified amount when that amount is > 0", () => {
+    it("status:201 and returns an article whose vote is incremented by the specified amount when that amount is > 0", () => {
       const incVotes = { inc_votes: 1 };
       return request(app)
         .patch("/api/articles/1")
@@ -102,7 +102,7 @@ describe("/api/articles/:articleId", () => {
         .send(incVotes)
         .expect(200)
         .then((res) => {
-          expect(res.body).toEqual({
+          expect(res.body.article).toEqual({
             article_id: 1,
             title: expect.any(String),
             body: expect.any(String),
@@ -120,7 +120,7 @@ describe("/api/articles/:articleId", () => {
         .send(incVotes)
         .expect(200)
         .then((res) => {
-          expect(res.body).toEqual({
+          expect(res.body.article).toEqual({
             article_id: 1,
             title: expect.any(String),
             body: expect.any(String),
@@ -511,6 +511,127 @@ describe("/api/comments/:comment_id", () => {
         .expect(404)
         .then((res) => {
           expect(res.body.msg).toBe("Not found");
+        });
+    });
+  });
+});
+
+describe("/api", () => {
+  describe("/GET", () => {
+    it("status:200 and responds with JSON describing all of the endpoints", () => {
+      return request(app)
+        .get("/api")
+        .expect(200)
+        .then((res) => {
+          expect(Object.keys(res.body.endpoints)).toHaveLength(8);
+          expect(res.body.endpoints).toEqual(
+            expect.objectContaining({
+              "GET /api": {
+                description:
+                  "serves up a json representation of all the available endpoints of the api",
+              },
+              "GET /api/topics": {
+                description: "serves an array of all topics",
+                queries: [],
+                exampleResponse: {
+                  topics: [
+                    {
+                      topic_name: "football",
+                      topic_description: "Footie!",
+                    },
+                  ],
+                },
+              },
+              "GET /api/articles/article_id": {
+                description:
+                  "serces the article specified by the article_id parameter",
+                queries: [],
+                exampleResponse: {
+                  article: {
+                    article_id: 1,
+                    title: "Running a Node App",
+                    body: "This is part two of a series on how to get up and running with Systemd and Node.js. This part dives deeper into how to successfully run your app with systemd long-term, and how to set it up in a production environment.",
+                    votes: 28,
+                    topic: "coding",
+                    author: "jessjelly",
+                    created_at: "2020-11-07T06:03:00.000Z",
+                    comment_count: 13,
+                  },
+                },
+              },
+              "GET /api/articles": {
+                description: "serves an array of all articles",
+                queries: ["topic", "sort_by", "order"],
+                exampleResponse: {
+                  articles: [
+                    {
+                      article_id: 1,
+                      title: "Seafood substitutions are increasing",
+                      body: "Text from the article..",
+                      votes: 0,
+                      topic: "cooking",
+                      author: "weegembump",
+                      created_at: 1527695953341,
+                      comment_count: 1,
+                    },
+                  ],
+                },
+              },
+              "PATCH /api/articles/:article_id": {
+                description:
+                  "increments the votes of the article whose ID matches that specified in the article_id parameter by the amount specified in the request body's inc_votes entry, and serves the updated article",
+                queries: [],
+                exampleResponse: {
+                  article: {
+                    article_id: 1,
+                    title: "Running a Node App",
+                    body: "This is part two of a series on how to get up and running with Systemd and Node.js. This part dives deeper into how to successfully run your app with systemd long-term, and how to set it up in a production environment.",
+                    votes: 28,
+                    topic: "coding",
+                    author: "jessjelly",
+                    created_at: "2020-11-07T06:03:00.000Z",
+                  },
+                },
+              },
+              "GET /api/articles/:article_id/comments": {
+                description:
+                  "serves an array of coments for the article_id provided in the parameter",
+                queries: [],
+                exampleResponse: {
+                  comments: [
+                    {
+                      comment_id: 31,
+                      votes: 11,
+                      created_at: "2020-09-26T17:16:00.000Z",
+                      author: "weegembump",
+                      body: "Sit sequi odio suscipit. Iure quisquam qui alias distinctio eos officia enim aut sit. Corrupti ut praesentium ut iste earum itaque qui. Dolores in ab rerum consequuntur. Id ab aliquid autem dolore",
+                    },
+                  ],
+                },
+              },
+              "POST /api/articles/:article_id/comments": {
+                description:
+                  "posts a comment, consisting of the contents of req.body's body entry, to the article specified by the article_id parameter, on behalf of the user whose username is specified in req.body's username entry, and serves the posted article",
+                queries: [],
+                exampleResponse: {
+                  comment: {
+                    comment_id: 321,
+                    author: "tickle122",
+                    article_id: 1,
+                    votes: 0,
+                    created_at: "2022-01-22T11:58:13.424Z",
+                    body: "hello",
+                  },
+                },
+              },
+              "DELETE /api/comments/:comment_id": {
+                description:
+                  "deletes the comment specified in the comment_id parameter",
+                queries: [],
+                exampleResponse: {},
+              },
+            })
+          );
         });
     });
   });
