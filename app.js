@@ -10,6 +10,7 @@ const {
   postComment,
   deleteComment,
 } = require("./controllers/comments.controllers");
+const { getApi } = require("./controllers/api.controller");
 
 const app = express();
 
@@ -23,6 +24,7 @@ app.get("/api/articles", getArticles);
 app.get("/api/articles/:article_id/comments", getCommentsByArticleId);
 app.post("/api/articles/:article_id/comments", postComment);
 app.delete("/api/comments/:comment_id", deleteComment);
+app.get("/api", getApi);
 
 app.use((err, req, res, next) => {
   if (err.code === "22P02" || err.code === "23503") {
