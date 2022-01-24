@@ -3,8 +3,6 @@ const { seedFormatter } = require("../utils/seed-formatting");
 
 afterAll(() => db.end());
 
-console.log(seedFormatter);
-
 describe("seedFormatter()", () => {
   it("returns an empty array when passed an empty array", () => {
     expect(seedFormatter([])).toEqual([]);
