@@ -26,14 +26,6 @@ describe("/api/topics", () => {
           });
         });
     });
-    //it("status:404 and returns a not found message when an incorrect path is specified", () => {
-    //return request(app)
-    //.get("/api/topd")
-    //.expect(404)
-    //.then(({ body }) => {
-    //expect(body.msg).toEqual("Not found");
-    //});
-    //});
   });
 });
 
@@ -58,7 +50,6 @@ describe("/api/articles/:articleId", () => {
           );
         });
     });
-
     it("status:400 and returns a bad request message when an incorrect article ID is specified", () => {
       return request(app)
         .get("/api/articles/swrg")
@@ -148,16 +139,6 @@ describe("/api/articles/:articleId", () => {
           });
         });
     });
-    // it("status:400 and returns a bad request message when req.body does not include an inc_votes property", () => {
-    //   const obj = {};
-    //   return request(app)
-    //     .patch("/api/articles/1")
-    //     .send(obj)
-    //     .expect(400)
-    //     .then((res) => {
-    //       expect(res.body.msg).toBe("Bad request");
-    //     });
-    // });
     it("status:400 and returns a bad request message when req.body's inc_votes property is of an incorrect data type", () => {
       const obj = { inc_votes: "hi" };
       return request(app)
@@ -458,6 +439,18 @@ describe("/api/articles/:article_id/comments", () => {
         .expect(400)
         .then((res) => {
           expect(res.body.msg).toBe("Bad request");
+        });
+    });
+    it("status:404 and returns a not found message if the username does not exist in thedatabase", () => {
+      return request(app)
+        .post("/api/articles/1/comments")
+        .send({
+          username: "sav",
+          body: "yo",
+        })
+        .expect(404)
+        .then((res) => {
+          expect(res.body.msg).toBe("Not found");
         });
     });
     it("status:400 and returns a bad request message if the datatype of body is wrong", () => {
