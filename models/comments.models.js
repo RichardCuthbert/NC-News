@@ -25,7 +25,6 @@ exports.createComment = (article_id, body, username, reqBodyLength) => {
   if (
     !username ||
     !body ||
-    reqBodyLength > 2 ||
     typeof body !== "string" ||
     typeof username !== "string"
   ) {
