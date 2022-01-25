@@ -10,10 +10,16 @@ const {
 } = require("../controllers/comments.controllers");
 const articlesRouter = express.Router();
 
-articlesRouter.get("/:article_id", getArticleById);
-articlesRouter.patch("/:article_id", patchVotesByArticleId);
+articlesRouter
+  .route("/:article_id")
+  .get(getArticleById)
+  .patch(patchVotesByArticleId);
+
 articlesRouter.get("/", getArticles);
-articlesRouter.get("/:article_id/comments", getCommentsByArticleId);
-articlesRouter.post("/:article_id/comments", postComment);
+
+articlesRouter
+  .route("/:article_id/comments")
+  .get(getCommentsByArticleId)
+  .post(postComment);
 
 module.exports = articlesRouter;
