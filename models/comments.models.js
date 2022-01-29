@@ -5,12 +5,12 @@ exports.fetchCommentsByArticleId = (article_id) => {
     .query(
       `SELECT comment_id, votes, created_at, author, body
      FROM comments
-      WHERE article_id=$1`,
+      WHERE article_id=$1;`,
       [article_id]
     )
     .then((res) => {
       return db
-        .query("SELECT * FROM articles WHERE article_id = $1", [article_id])
+        .query("SELECT * FROM articles WHERE article_id = $1;", [article_id])
         .then((z) => {
           if (z.rows.length === 0) {
             return Promise.reject({ status: 404, msg: "Not found" });
@@ -35,15 +35,15 @@ exports.createComment = (article_id, body, username, reqBodyLength) => {
   }
 
   return db
-    .query("SELECT * FROM users WHERE user_name = $1", [username])
-    .then((s) => {
-      if (s.rows.length === 0) {
+    .query("SELECT * FROM users WHERE user_name = $1;", [username])
+    .then((res) => {
+      if (res.rows.length === 0) {
         return Promise.reject({ status: 404, msg: "Not found" });
       } else {
         return db
           .query("SELECT * FROM articles WHERE article_id = $1", [article_id])
-          .then((z) => {
-            if (z.rows.length === 0) {
+          .then((res) => {
+            if (res.rows.length === 0) {
               return Promise.reject({ status: 404, msg: "Not found" });
             } else {
               return db
@@ -52,7 +52,7 @@ exports.createComment = (article_id, body, username, reqBodyLength) => {
          (article_id, body, author)
           VALUES
           ($1, $2, $3)
-          RETURNING *`,
+          RETURNING *;`,
                   [article_id, body, username]
                 )
                 .then((res) => {
@@ -69,13 +69,13 @@ exports.removeComment = (comment_id) => {
     return Promise.reject({ status: 400, msg: "Bad request" });
   }
   return db
-    .query("SELECT * FROM comments WHERE comment_id = $1", [comment_id])
-    .then((z) => {
-      if (z.rows.length === 0) {
+    .query("SELECT * FROM comments WHERE comment_id = $1;", [comment_id])
+    .then((res) => {
+      if (res.rows.length === 0) {
         return Promise.reject({ status: 404, msg: "Not found" });
       } else {
         return db
-          .query("DELETE FROM comments WHERE comment_id = $1 RETURNING *", [
+          .query("DELETE FROM comments WHERE comment_id = $1 RETURNING *;", [
             comment_id,
           ])
           .then((res) => {

@@ -1,5 +1,3 @@
-//const req = require("express/lib/request");
-//const ConnectionParameters = require("pg/lib/connection-parameters");
 const db = require("../db/connection");
 
 exports.fetchArticleById = (article_id) => {
@@ -39,7 +37,7 @@ exports.updateVotesByArticleId = (inc_votes, article_id, bodyLength) => {
 
   return db
     .query(
-      "UPDATE articles SET votes = votes + $1 WHERE article_id = $2 RETURNING *",
+      "UPDATE articles SET votes = votes + $1 WHERE article_id = $2 RETURNING *;",
       [inc_votes, article_id]
     )
     .then((res) => {
@@ -87,7 +85,7 @@ exports.fetchArticles = (sort_by, order, topic) => {
   FROM articles
 LEFT JOIN comments ON articles.article_id = comments.article_id
 GROUP BY articles.article_id 
-ORDER BY ${sort_by} ${order}`
+ORDER BY ${sort_by} ${order};`
     )
     .then((res) => {
       if (topic) {

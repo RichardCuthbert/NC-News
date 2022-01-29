@@ -89,9 +89,6 @@ const seed = (data) => {
       );
       return db.query(commentsSql);
     });
-
-  // 1. create tables
-  // 2. insert data
 };
 
 module.exports = seed;
