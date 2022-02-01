@@ -19,7 +19,7 @@ const config =
       }
     : {};
 
-module.exports = new Pool(config);
+module.exports = new Pool();
 
 // const { Pool } = require("pg");
 
